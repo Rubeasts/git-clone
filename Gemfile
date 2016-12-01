@@ -1,0 +1,12 @@
+source 'https://rubygems.org'
+
+gem 'json'
+gem 'rake'
+gem 'tux'
+gem 'sequel'
+gem 'http'
+gem 'sqlite3'
+gem 'flog'
+gem 'flay'
+gem 'rubocop'
+gem 'gems'
