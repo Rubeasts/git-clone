@@ -3,7 +3,6 @@
 require_relative 'spec_helper'
 
 describe 'Github specifications' do
-
   before do
     GetCloneData::ClonedRepo.wipe
     @repository = GetCloneData::ClonedRepo.clone(git_url: HAPPY_GIT_URL)

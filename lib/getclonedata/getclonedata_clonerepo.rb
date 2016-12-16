@@ -43,43 +43,43 @@ module GetCloneData
     end
 
     def get_flog_scores
-      if Dir.exists? @repo_path
+      if Dir.exist? @repo_path
         flog_response = `flog #{@repo_path}`.split("\n")
           .map { |item| item.split(":").first.to_f }
       end
-    	# reponse is an array of all the flog scores from total , ave, each method...
-    	flog_response if flog_response
+      # reponse is an array of all the flog scores from total , ave, each method...
+      flog_response if flog_response
     end
 
     def get_flay_score
-      if Dir.exists? @repo_path
-        flay = `flay #{@repo_path}`&.split("=").last.split("\n").first.to_f
+      if Dir.exist? @repo_path
+        flay = `flay #{@repo_path}`.split("=").last.split("\n").first.to_f
       end
       flay if flay
     end
 
     def get_rubocop_errors
-    	holder = Array.new()
-    	if Dir.exists? @repo_path
-    	  rubocop_response = `rubocop #{@repo_path}`
-    	  holder << rubocop_response.split("\n").last.split("files").first.to_f
-    	  holder << rubocop_response.split("\n").last.split(",").last.split("offenses").first.to_f
-    	end
-    	# response is array [no. of files, no. of offenses]
-    	holder
+      holder = Array.new()
+      if Dir.exist? @repo_path
+        rubocop_response = `rubocop #{@repo_path}`
+        holder << rubocop_response.split("\n").last.split("files").first.to_f
+        holder << rubocop_response.split("\n").last.split(",").last.split("offenses").first.to_f
+      end
+      # response is array [no. of files, no. of offenses]
+      holder
     end
 
     def get_loc
-    	if Dir.exists? @repo_path
-    	  loc_response = `cloc #{@repo_path}`
+      if Dir.exist? @repo_path
+        loc_response = `cloc #{@repo_path}`
         if loc_response.empty?
           loc_response = nil
         else
-          loc_response = loc_response.split("SUM").last.split("\n").first
-            .split("    ")[2..5].map { |i| i.to_f }
+          loc_response = loc_response.split('SUM').last.split("\n").first
+            .split('    ')[2..5].map(&:to_f)
         end
-    	end
-    	loc_response
+      end
+      loc_response
     end
   end
 end
