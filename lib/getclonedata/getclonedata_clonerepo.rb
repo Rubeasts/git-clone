@@ -7,8 +7,15 @@ module GetCloneData
       )
     )
 
+    attr_reader :flog, :flog, :flay, :rubocop, :loc
+
     def initialize(repo_path:)
       @repo_path = repo_path
+      @flog = get_flog_scores
+      @flay = get_flay_score
+      @rubocop = get_rubocop_errors
+      @loc = get_loc
+      wipe
     end
 
     def self.clone(git_url:)
@@ -22,6 +29,10 @@ module GetCloneData
       `rm -R -f #{CLONED_REPO_PATH}/*`
     end
 
+    def wipe
+      `rm -R -f #{@repo_path}`
+    end
+
     def self.get_repo_path(git_url:)
       repository = git_url.gsub('.git','').split('/')[3,4]
       File.expand_path(
@@ -31,37 +42,20 @@ module GetCloneData
       )
     end
 
-    def loc_in_folder(folder)
-    	if Dir.exists? @repo_path
-    	  loc_in_folder = `cloc #{@repo_path}/#{folder}`
-          .split("SUM").last.split("\n").first.split(" ")[1..5]
-          .map { |i| i.to_f }
-    	end
-    	# response is an array of [no of files, no blank lines, no comments, no code lines]
-    	loc_in_folder if loc_in_folder
-    end
-
-    def loc_in_file(file)
-    	if File.exists? @repo_path
-    	  loc_in_file = `wc -l #{@repo_path}/#{file}`.split(" ").first.to_f
-    	end
-    	# response is fixnum of lines of code in file (no comments or blanks)
-    	loc_in_file if loc_in_file
-    end
-
     def get_flog_scores
       if Dir.exists? @repo_path
         flog_response = `flog #{@repo_path}`.split("\n")
           .map { |item| item.split(":").first.to_f }
-    	end
+      end
     	# reponse is an array of all the flog scores from total , ave, each method...
     	flog_response if flog_response
     end
 
     def get_flay_score
       if Dir.exists? @repo_path
-        `flay #{@repo_path}`.split("=").last.split("\n").first.to_f
+        flay = `flay #{@repo_path}`&.split("=").last.split("\n").first.to_f
       end
+      flay if flay
     end
 
     def get_rubocop_errors
@@ -77,8 +71,13 @@ module GetCloneData
 
     def get_loc
     	if Dir.exists? @repo_path
-    	  loc_response = `cloc #{@repo_path}`.split("SUM").last.split("\n").first
-          .split("    ")[2..5].map { |i| i.to_f }
+    	  loc_response = `cloc #{@repo_path}`
+        if loc_response.empty?
+          loc_response = nil
+        else
+          loc_response = loc_response.split("SUM").last.split("\n").first
+            .split("    ")[2..5].map { |i| i.to_f }
+        end
     	end
     	loc_response
     end
