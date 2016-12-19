@@ -18,10 +18,10 @@ describe 'Github specifications' do
   end
 
   it 'HAPPY: should contain flog' do
-    @repository.flog.must_be_instance_of Array
+    @repository.get_flog_scores.must_be_instance_of Array
   end
 
   it 'HAPPY: should contain flay' do
-    @repository.flay.must_be_instance_of Float
+    @repository.get_flay_score.must_be_instance_of Float
   end
 end

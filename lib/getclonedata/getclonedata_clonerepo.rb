@@ -11,18 +11,13 @@ module GetCloneData
 
     def initialize(repo_path:)
       @repo_path = repo_path
-      @flog = get_flog_scores
-      @flay = get_flay_score
-      @rubocop = get_rubocop_errors
-      @loc = get_loc
-      wipe
     end
 
     def self.clone(git_url:)
       repo_path = self.get_repo_path(git_url: git_url)
-      `git clone #{git_url} #{repo_path}`
+      `git clone --depth=1 #{git_url} #{repo_path}`
       return nil unless Dir.exists? repo_path
-      new(repo_path: repo_path)
+      new(repo_path: repo_path)        
     end
 
     def self.wipe
