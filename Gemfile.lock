@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    getclonedata (0.2)
+    getclonedata (0.2.1)
       cloc (~> 0.9)
       flay (~> 2.8)
       flog (~> 4.4)

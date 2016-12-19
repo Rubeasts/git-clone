@@ -7,6 +7,8 @@ module GetCloneData
       )
     )
 
+    @@itt = 0
+
     attr_reader :flog, :flog, :flay, :rubocop, :loc
 
     def initialize(repo_path:)
@@ -17,7 +19,7 @@ module GetCloneData
       repo_path = self.get_repo_path(git_url: git_url)
       `git clone --depth=1 #{git_url} #{repo_path}`
       return nil unless Dir.exists? repo_path
-      new(repo_path: repo_path)        
+      new(repo_path: repo_path)
     end
 
     def self.wipe
@@ -29,12 +31,17 @@ module GetCloneData
     end
 
     def self.get_repo_path(git_url:)
-      repository = git_url.gsub('.git','').split('/')[3,4]
+      owner, repo = git_url.gsub('.git','').split('/')[3,4]
       File.expand_path(
         File.join(
-          CLONED_REPO_PATH, repository[0], repository[1]
+          CLONED_REPO_PATH, owner, repo, itt.to_s
         )
       )
+    end
+
+    def self.itt
+      @@itt = @@itt + 1
+      @@itt
     end
 
     def get_flog_scores
