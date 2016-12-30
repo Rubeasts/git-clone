@@ -9,7 +9,7 @@ module GetCloneData
 
     @@itt = 0
 
-    attr_reader :flog, :flog, :flay, :rubocop, :loc
+    attr_reader :flog, :flog, :flay, :rubocop, :loc, :ruby_files
 
     def initialize(repo_path:)
       @repo_path = repo_path
@@ -44,10 +44,24 @@ module GetCloneData
       @@itt
     end
 
+    def ruby_files
+      return @ruby_files if @ruby_files
+
+      path_rb_expander = PathExpander.new [@repo_path], "**/*.{rb,rake}"
+      @ruby_files = path_rb_expander.process
+      @ruby_files
+    end
+
     def get_flog_scores
       if Dir.exist? @repo_path
-        flog_response = `flog #{@repo_path}`.split("\n")
-          .map { |item| item.split(":").first.to_f }
+        flog = Flog.new
+        flog.flog(*ruby_files)
+        #flog.calculate_total_score
+        flog_response = {
+          total_score: flog.total_score,
+          max_score: flog.max_score,
+          average: flog.average
+        }
       end
       # reponse is an array of all the flog scores from total , ave, each method...
       flog_response if flog_response
@@ -55,20 +69,20 @@ module GetCloneData
 
     def get_flay_score
       if Dir.exist? @repo_path
-        flay = `flay #{@repo_path}`.split("=").last.split("\n").first.to_f
+        flay = Flay.new
+        flay.process(*ruby_files)
+        flay.analyze
+        flay = flay.summary.values.first
       end
       flay if flay
     end
 
     def get_rubocop_errors
-      holder = Array.new()
       if Dir.exist? @repo_path
-        rubocop_response = `rubocop #{@repo_path}`
-        holder << rubocop_response.split("\n").last.split("files").first.to_f
-        holder << rubocop_response.split("\n").last.split(",").last.split("offenses").first.to_f
+        rubocop_response = `rubocop #{@repo_path} --format json`
+        summary = JSON.parse(rubocop_response, :symbolize_names => true)[:summary]
+        summary
       end
-      # response is array [no. of files, no. of offenses]
-      holder
     end
 
     def get_loc
