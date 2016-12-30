@@ -18,10 +18,24 @@ describe 'Github specifications' do
   end
 
   it 'HAPPY: should contain flog' do
-    @repository.get_flog_scores.must_be_instance_of Array
+    flog = {
+      total_score: 407.33109526582183,
+      max_score: 142.57356872856903,
+      average: 31.333161174293988
+    }
+    @repository.get_flog_scores.must_equal flog
   end
 
   it 'HAPPY: should contain flay' do
     @repository.get_flay_score.must_be_instance_of Float
+  end
+
+  it 'HAPPY: should contain rubocop summary' do
+    summary = {
+      offense_count: 578,
+      target_file_count: 6,
+      inspected_file_count: 6
+    }
+    @repository.get_rubocop_errors.must_equal summary
   end
 end
