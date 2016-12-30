@@ -9,7 +9,7 @@ module GetCloneData
 
     @@itt = 0
 
-    attr_reader :flog, :flog, :flay, :rubocop, :loc, :ruby_files
+    attr_reader :repo_path
 
     def initialize(repo_path:)
       @repo_path = repo_path

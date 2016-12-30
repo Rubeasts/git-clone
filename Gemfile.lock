@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    getclonedata (0.3.0)
+    getclonedata (0.3.1)
       cloc (~> 0.9)
       flay (~> 2.8)
       flog (~> 4.4)
@@ -46,7 +46,7 @@ GEM
     path_expander (1.0.1)
     powerpack (0.1.1)
     public_suffix (2.0.4)
-    rainbow (2.1.0)
+    rainbow (2.2.1)
     rake (11.3.0)
     rubocop (0.46.0)
       parser (>= 2.3.1.1, < 3.0)
