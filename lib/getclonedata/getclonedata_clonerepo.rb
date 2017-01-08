@@ -79,7 +79,7 @@ module GetCloneData
 
     def get_rubocop_errors
       if Dir.exist? @repo_path
-        rubocop_response = `rubocop #{@repo_path} --format json`
+        rubocop_response = `cd #{@repo_path} ; rubocop --format json`
         summary = JSON.parse(rubocop_response, :symbolize_names => true)[:summary]
         summary
       end
